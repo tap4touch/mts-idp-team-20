@@ -1,0 +1,24 @@
+# SSH-ключи и секреты
+.ssh/
+id_rsa*
+id_ed25519*
+team_internal*
+mts_data_platforms*
+hadoop-keys.pub
+*.pem
+*.key
+.env
+.env.*
+!.env.example
+
+hadoop-*.tar.gz
+*.log
+*.pid
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
