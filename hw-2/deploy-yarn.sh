@@ -36,7 +36,7 @@ done
 ssh $SSH_OPTS team@$NN "
     set -e
     sudo sed -i 's|team-20-nn:9868|0.0.0.0:9868|' ${HADOOP_HOME}/etc/hadoop/hdfs-site.xml
-    sudo -i -u hadoop bash -c '
+    sudo -H -u hadoop bash -lc '
         set -e
         source ~/.bashrc
         hdfs --daemon stop secondarynamenode
@@ -46,14 +46,14 @@ ssh $SSH_OPTS team@$NN "
 "
 
 ssh $SSH_OPTS team@$NN "
-    sudo -i -u hadoop bash -c '
+    sudo -H -u hadoop bash -lc '
         source ~/.bashrc
         mapred --daemon start historyserver
     '
 "
 
 ssh $SSH_OPTS team@$NN "
-    sudo -i -u hadoop bash -c '
+    sudo -H -u hadoop bash -lc '
         source ~/.bashrc
         yarn node -list
     '
