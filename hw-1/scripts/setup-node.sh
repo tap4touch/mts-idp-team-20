@@ -8,7 +8,7 @@ fi
 
 apt update
 apt upgrade -y
-apt install -y openjdk-11-jdk-headless openssh-server curl ca-certificates
+apt install -y openjdk-11-jdk-headless openssh-server wget ca-certificates
 systemctl enable --now ssh
 
 if ! id hadoop >/dev/null 2>&1; then
@@ -17,9 +17,11 @@ fi
 
 cd /home/hadoop
 if [ ! -d hadoop-3.4.0 ]; then
-    curl -fL https://archive.apache.org/dist/hadoop/common/hadoop-3.4.0/hadoop-3.4.0.tar.gz -o hadoop-3.4.0.tar.gz
-    tar -xzf hadoop-3.4.0.tar.gz
-    rm hadoop-3.4.0.tar.gz
+    if [ ! -f /home/team/hadoop-3.4.0.tar.gz ]; then
+        wget https://archive.apache.org/dist/hadoop/common/hadoop-3.4.0/hadoop-3.4.0.tar.gz -O /home/team/hadoop-3.4.0.tar.gz.part
+        mv /home/team/hadoop-3.4.0.tar.gz.part /home/team/hadoop-3.4.0.tar.gz
+    fi
+    tar -xzf /home/team/hadoop-3.4.0.tar.gz
 fi
 
 cp /home/team/hw-1/config/core-site.xml hadoop-3.4.0/etc/hadoop/

@@ -4,8 +4,15 @@ set -e
 cd /home/team/hw-1
 sudo bash scripts/setup-node.sh
 
+if [ ! -f /home/team/hadoop-3.4.0.tar.gz ]; then
+    sudo tar -czf /home/team/hadoop-3.4.0.tar.gz.part -C /home/hadoop hadoop-3.4.0
+    sudo mv /home/team/hadoop-3.4.0.tar.gz.part /home/team/hadoop-3.4.0.tar.gz
+fi
+sudo chown team:team /home/team/hadoop-3.4.0.tar.gz
+
 for node in team-20-nn team-20-00 team-20-01; do
     scp -i ~/.ssh/team_internal -o IdentitiesOnly=yes -r /home/team/hw-1 "team@$node:/home/team/"
+    scp -i ~/.ssh/team_internal -o IdentitiesOnly=yes /home/team/hadoop-3.4.0.tar.gz "team@$node:/home/team/"
     ssh -i ~/.ssh/team_internal -o IdentitiesOnly=yes "team@$node" \
         'sudo bash /home/team/hw-1/scripts/setup-node.sh'
 done
