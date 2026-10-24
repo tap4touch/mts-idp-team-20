@@ -21,8 +21,8 @@ on_node() {
     fi
 }
 
-if sudo pgrep -a -u hadoop -f 'org.apache.spark.deploy.SparkSubmit.*sales.py'; then
-    echo "Дождитесь завершения run-spark.sh перед откатом." >&2
+if sudo pgrep -a -u hadoop -f 'org.apache.spark.deploy.SparkSubmit.*transform_orders.py'; then
+    echo "Дождитесь завершения run-spark-job.sh перед откатом." >&2
     exit 1
 fi
 
@@ -30,16 +30,19 @@ if [ "$mode" = hw3 ] && sudo test -d /home/hadoop/hw-4; then
     sudo -iu hadoop bash <<'DROP_SPARK_TABLE'
 set -e
 beeline -u jdbc:hive2://localhost:5433 -n hadoop -p "" \
-    -e 'DROP TABLE IF EXISTS sales_summary;' >/dev/null
+    -e 'DROP TABLE IF EXISTS shop.revenue_by_category; DROP DATABASE IF EXISTS shop;' >/dev/null
 DROP_SPARK_TABLE
 fi
 
 if [ "$mode" != zero ] && sudo test -d /home/hadoop/hw-4; then
     sudo -u hadoop env JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 \
-        /home/hadoop/hadoop-3.4.0/bin/hdfs dfs -rm -r -f /user/hadoop/hw-4 >/dev/null
+        /home/hadoop/hadoop-3.4.0/bin/hdfs dfs -rm -r -f /demo/spark_hw /apps/spark >/dev/null
 fi
 
-sudo rm -rf /home/hadoop/spark-3.5.7-bin-hadoop3 /home/hadoop/hw-4
+if sudo test -f /home/hadoop/.profile; then
+    sudo sed -i '/^export SPARK_HOME=/d; /^export PYSPARK_PYTHON=python3$/d; /^export PATH=.*SPARK_HOME/d; /^export PATH=.*spark-3.5.9-bin-hadoop3/d' /home/hadoop/.profile
+fi
+sudo rm -rf /home/hadoop/spark-3.5.9-bin-hadoop3 /home/hadoop/spark-3.5.9-bin-hadoop3.tgz /home/hadoop/spark-3.5.9-bin-hadoop3.tgz.part /home/hadoop/hw-4
 
 if [ "$mode" = hw3 ]; then
     exit 0
